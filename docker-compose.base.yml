@@ -15,7 +15,7 @@ x-api: &default-api
     - SITE_URL=${DOMAIN}
     - CELERY_BROKER_URL=amqp://rabbitmq
     - MODE=${MODE:-Prod}
-    - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+    - CSRF_TRUSTED_ORIGINS=https://kenon.sintaxy.com
   volumes:
     - photos:/kenon-backend/openIMIS/images/insurees
   networks:
