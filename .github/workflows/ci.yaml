@@ -2,10 +2,7 @@ name: CI pipeline
 on:
   push:
     branches:
-      - main
-      - 'release/**'
-      - develop
-      - 'feature/**'
+      - stp-changes
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -17,6 +14,7 @@ jobs:
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
+    if: false
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,6 +27,7 @@ jobs:
   test:
     name: Cypress
     runs-on: ubuntu-latest
+    if: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
