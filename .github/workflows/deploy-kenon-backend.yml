@@ -1,0 +1,23 @@
+name: Deploy Kenon Backend
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'latest'
+        required: true
+        default: 'latest'
+
+jobs:
+  deploy-backend:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo central
+        uses: actions/checkout@v3
+
+      - name: Deploy backend
+        run: |
+          cd /app
+          docker compose pull backend:${{ github.event.inputs.image_tag }}
+          docker compose up -d backend
+          docker exec backend python manage.py migrate
