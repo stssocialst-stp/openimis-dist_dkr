@@ -63,30 +63,12 @@ services:
     command: worker
     env_file: .env
 
-  db:
-    container_name: ${PROJECT_NAME:-kenon}-db
-    image: postgres:13
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - database:/var/lib/postgresql/data
-    networks:
-      openimis-net
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: always
-
   rabbitmq:
     container_name: ${PROJECT_NAME:-kenon}-rabbitmq
     image: rabbitmq:3-management
     restart: always
     networks:
-      openimis-net
+      openimis-net:
     ports:
       - 5672:5672
 
