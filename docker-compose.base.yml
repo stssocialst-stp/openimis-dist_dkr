@@ -27,7 +27,7 @@ x-api: &default-api
 
 services:
   frontend:
-    container_name: ${PROJECT_NAME:-kenon}-frontend
+    container_name: kenon-frontend
     image: ghcr.io/stssocialst-stp/kenon-frontend:latest
     build: 
       context: ./openimis-fe_js/
@@ -42,8 +42,8 @@ services:
     networks:
       openimis-net:
     ports:
-      - ${HTTP_PORT:-4005}:80
-      - ${HTTPS_PORT:-4006}:443
+      - 4005:80    # frontend HTTP
+      - 4006:443   # frontend HTTPS
     depends_on:
       - backend
     volumes:
@@ -53,30 +53,32 @@ services:
 
   backend:
     <<: *default-api
-    container_name: ${PROJECT_NAME:-kenon}-backend
+    container_name: kenon-backend
     command: start
     env_file: .env
     ports:
-      - ${BACKEND_PORT:-4007}:8000   # opcional se quiser expor backend direto
+      - 4007:8000   # backend exposto na porta 4007
 
   worker:
     <<: *default-api
-    container_name: ${PROJECT_NAME:-kenon}-worker
+    container_name: kenon-worker
     command: worker
     env_file: .env
+    ports:
+      - 4009:8000   # worker exposto na porta 4009
 
   rabbitmq:
-    container_name: ${PROJECT_NAME:-kenon}-rabbitmq
+    container_name: kenon-rabbitmq
     image: rabbitmq:3-management
     restart: always
     networks:
       openimis-net:
     ports:
-      - ${RABBITMQ_PORT:-4008}:5672   # opcional se quiser expor externamente
+      - 4008:5672   # rabbitmq exposto na porta 4008
 
 networks:
   openimis-net:
-    name: "${PROJECT_NAME:-kenon}-net"
+    name: kenon-net
 
 volumes:
   database:
