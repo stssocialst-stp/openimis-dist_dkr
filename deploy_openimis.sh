@@ -40,8 +40,8 @@ else
     docker compose up -d backend
 
     # 3.5️⃣ Rodar migrations e scripts do backend
-    docker compose run --rm kenon-backend mix ecto.migrate
-    docker compose run --rm kenon-backend mix run imisSetupScripts/imisSetup.exs
+    docker compose run --rm backend mix ecto.migrate
+    docker compose run --rm backend mix run imisSetupScripts/imisSetup.exs
 
     # 3.6️⃣ Criar lockfile para não repetir inicialização
     touch '.init.lock'
