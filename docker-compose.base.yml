@@ -18,9 +18,6 @@ x-api: &default-api
     - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
   volumes:
     - photos:/kenon-backend/openIMIS/images/insurees
-  depends_on:
-    db:
-      condition: service_healthy
   networks:
     openimis-net:
   restart: always
