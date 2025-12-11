@@ -37,15 +37,7 @@ else
     done
     echo "PostgreSQL is ready."
 
-    # 3.3️⃣ Criar usuário do PostgreSQL se não existir (usando DB_USER atual)
-    docker compose exec db psql -U ${DB_USER} -tc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1 || \
-    docker compose exec db psql -U ${DB_USER} -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';"
     
-    # 3.4️⃣ Criar banco se não existir e ajustar owner
-    docker compose exec db psql -U ${DB_USER} -tc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'" | grep -q 1 || \
-    docker compose exec db psql -U ${DB_USER} -c "CREATE DATABASE ${DB_NAME};"
-    
-    docker compose exec db psql -U ${DB_USER} -c "ALTER DATABASE ${DB_NAME} OWNER TO ${DB_USER};"
 
     # 3.5️⃣ Rodar migrations e scripts do backend
     docker compose run --rm kenon-backend mix ecto.migrate
