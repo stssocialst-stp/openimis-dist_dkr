@@ -37,7 +37,7 @@ else
     done
     echo "PostgreSQL is ready."
 
-    
+    docker compose up -d backend
 
     # 3.5️⃣ Rodar migrations e scripts do backend
     docker compose run --rm kenon-backend mix ecto.migrate
