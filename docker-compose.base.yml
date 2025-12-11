@@ -1,7 +1,6 @@
 #version: "3.7"
 x-api: &default-api
-  # image: ghcr.io/openimis/openimis-be:${BE_TAG:-develop}
-  image: openimis-be-stp:latest
+  image: ghcr.io/stssocialst-stp/kenon-backend:latest
   build: 
     context: ./openimis-be_py/
     dockerfile: Dockerfile
@@ -18,7 +17,7 @@ x-api: &default-api
     - MODE=${MODE:-Prod}
     - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
   volumes:
-    - photos:/openimis-be/openIMIS/images/insurees
+    - photos:/kenon-backend/openIMIS/images/insurees
   depends_on:
     db:
       condition: service_healthy
@@ -28,9 +27,8 @@ x-api: &default-api
 
 services:
   frontend:
-    container_name: ${PROJECT_NAME:-openimis}-frontend
-    # image: ghcr.io/openimis/openimis-fe:${FE_TAG:-develop}
-    image: openimis-fe-stp:latest
+    container_name: ${PROJECT_NAME:-kenon}-frontend
+    image: ghcr.io/stssocialst-stp/kenon-frontend:latest
     build: 
       context: ./openimis-fe_js/
       dockerfile: Dockerfile
@@ -51,30 +49,51 @@ services:
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
-      # comment the following line if you are using your own gateway
       - ./conf/nginx:/conf/
+
   backend:
     <<: *default-api
-    container_name: ${PROJECT_NAME:-openimis}-api
+    container_name: ${PROJECT_NAME:-kenon}-backend
     command: start
     env_file: .env
   
   worker:
     <<: *default-api
-    container_name: ${PROJECT_NAME:-openimis}-worker
+    container_name: ${PROJECT_NAME:-kenon}-worker
     command: worker
     env_file: .env
+
+  db:
+    container_name: ${PROJECT_NAME:-kenon}-db
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      openimis-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
   rabbitmq:
-    container_name: ${PROJECT_NAME:-openimis}-rabbitmq
+    container_name: ${PROJECT_NAME:-kenon}-rabbitmq
     image: rabbitmq:3-management
     restart: always
     networks:
-      openimis-net:
+      openimis-net
     ports:
       - 5672:5672
+
 networks:
   openimis-net:
-    name: "${PROJECT_NAME:-openimis}-net"
+    name: "${PROJECT_NAME:-kenon}-net"
+
 volumes:
   database:
   photos:
