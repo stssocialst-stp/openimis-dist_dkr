@@ -42,8 +42,8 @@ services:
     networks:
       openimis-net:
     ports:
-      - ${HTTP_PORT:-80}:80
-      - ${HTTPS_PORT:-443}:443
+      - ${HTTP_PORT:-4005}:80
+      - ${HTTPS_PORT:-4006}:443
     depends_on:
       - backend
     volumes:
@@ -56,7 +56,9 @@ services:
     container_name: ${PROJECT_NAME:-kenon}-backend
     command: start
     env_file: .env
-  
+    ports:
+      - ${BACKEND_PORT:-4007}:8000   # opcional se quiser expor backend direto
+
   worker:
     <<: *default-api
     container_name: ${PROJECT_NAME:-kenon}-worker
@@ -70,7 +72,7 @@ services:
     networks:
       openimis-net:
     ports:
-      - 5672:5672
+      - ${RABBITMQ_PORT:-4008}:5672   # opcional se quiser expor externamente
 
 networks:
   openimis-net:
