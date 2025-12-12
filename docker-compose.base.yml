@@ -9,7 +9,7 @@ x-api: &default-api
     - DB_PASSWORD=${DB_PASSWORD}
     - SITE_ROOT=api
     - SITE_URL=${DOMAIN}
-    - CELERY_BROKER_URL=amqp://rabbitmq
+    - CELERY_BROKER_URL=amqp://kenon-stp-rabbitmq
     - MODE=${MODE:-Prod}
     - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
   volumes:
