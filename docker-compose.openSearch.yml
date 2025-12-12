@@ -1,42 +1,43 @@
 version: '3.7'
-services:
-  opensearch:
-    build:
-      context: .
-      dockerfile: ./opensearch-configuration/Dockerfile-openSearch-dev-
-    env_file:
-      - ".env.openSearch"
-    environment:
-      - "discovery.type=${DISCOVERY_TYPE:-single-node}"
-      - "cluster.name=${CLUSTER_NAME:-my_opensearch_local}"
-      - "http.port=${OPEN_SEARCH_HTTP_PORT:-9200}"
-      - "plugins.security.ssl.http.enabled=${SLL_HTTP_ENABLED:-false}"
-      - "plugins.security.disabled=true"
-    volumes:
-      - "opensearch-data1:/usr/share/opensearch/data"
-    ports:
-      - 4010:9200 # <-- OPEN SEARCH API Mapeado para 4010 (Conforme seu Nginx)
-    networks:
-      kenon-stp-net:
 
-  opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.9.0
-    container_name: ${PROJECT_NAME:-openimis}-opensearch-dashboards
-    environment:
-      - OPENSEARCH_HOSTS=${OPENSEARCH_HOSTS:-http://opensearch:9200}
-      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
-      - SERVER_BASEPATH=/opensearch
-      - SERVER_REWRITEBASEPATH=true
-    volumes:
-      - "./conf/opensearch/opensearch.yml:/usr/share/opensearch-dashboards/config/opensearch.yml"
-    ports:
-      - 4009:5601 # <-- DASHBOARDS Mapeado para 4009 (Conforme seu Nginx)
-    networks:
-      kenon-stp-net:
+services:
+  opensearch:
+    build:
+      context: .
+      dockerfile: ./opensearch-configuration/Dockerfile-openSearch-dev-
+    env_file:
+      - ".env.openSearch"
+    environment:
+      - "discovery.type=${DISCOVERY_TYPE:-single-node}"
+      - "cluster.name=${CLUSTER_NAME:-my_opensearch_local}"
+      - "http.port=${OPEN_SEARCH_HTTP_PORT:-9200}"
+      - "plugins.security.ssl.http.enabled=${SSL_HTTP_ENABLED:-false}"
+      - "plugins.security.disabled=true"
+    volumes:
+      - "opensearch-data1:/usr/share/opensearch/data"
+    ports:
+      - "4010:9200"
+    networks:
+      - kenon-stp-net
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.9.0
+    container_name: ${PROJECT_NAME:-openimis}-opensearch-dashboards
+    environment:
+      - "OPENSEARCH_HOSTS=${OPENSEARCH_HOSTS:-http://opensearch:9200}"
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
+      - "SERVER_BASEPATH=/opensearch"
+      - "SERVER_REWRITEBASEPATH=true"
+    volumes:
+      - "./conf/opensearch/opensearch.yml:/usr/share/opensearch-dashboards/config/opensearch.yml"
+    ports:
+      - "4009:5601"
+    networks:
+      - kenon-stp-net
 
 volumes:
-  opensearch-data1:
+  opensearch-data1:
 
 networks:
-  kenon-stp-net:
-    external: true
+  kenon-stp-net:
+    external: true
