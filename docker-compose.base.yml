@@ -15,7 +15,7 @@ x-api: &default-api
   volumes:
     - photos:/openimis-be/openIMIS/images/insurees
   networks:
-    - openimis-net
+    - kenon-stp-net
   restart: always
 
 services:
@@ -30,7 +30,7 @@ services:
       - OPENIMIS_CONF_JSON=${OPENIMIS_FE_CONF_JSON}
       - OPENSEARCH_BASIC_TOKEN=${OPENSEARCH_BASIC_TOKEN}
     networks:
-      - openimis-net
+      - kenon-stp-net
     ports:
       - ${HTTP_PORT:-4005}:80
       - ${HTTPS_PORT:-4006}:443
@@ -60,14 +60,14 @@ services:
     image: rabbitmq:3-management
     restart: always
     networks:
-      - openimis-net
+      - kenon-stp-net
     ports:
       - 5672:5672
       - 4011:15672
 
 networks:
-  openimis-net:
-    external: true
+  kenon-stp-net:
+    driver: bridge
 
 volumes:
   database:
