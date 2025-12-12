@@ -67,7 +67,7 @@ services:
 
 networks:
   kenon-stp-net:
-    driver: bridge
+    external: true
 
 volumes:
   database:
