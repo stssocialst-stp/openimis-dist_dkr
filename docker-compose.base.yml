@@ -1,9 +1,5 @@
-#version: "3.7"
 x-api: &default-api
-  image: ghcr.io/stssocialst-stp/kenon-backend:latest
-  build: 
-    context: ./openimis-be_py/
-    dockerfile: Dockerfile
+  image: ghcr.io/stssocialst-stp/openimis-be-stp:latest
   environment:
     - DB_DEFAULT=${DB_DEFAULT:-postgresql}
     - DB_HOST=${DB_HOST}
@@ -15,20 +11,17 @@ x-api: &default-api
     - SITE_URL=${DOMAIN}
     - CELERY_BROKER_URL=amqp://rabbitmq
     - MODE=${MODE:-Prod}
-    - CSRF_TRUSTED_ORIGINS=https://kenon.sintaxy.com
+    - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
   volumes:
-    - photos:/kenon-backend/openIMIS/images/insurees
+    - photos:/openimis-be/openIMIS/images/insurees
   networks:
-    openimis-net:
+    - openimis-net
   restart: always
 
 services:
   frontend:
-    container_name: kenon-frontend
-    image: ghcr.io/stssocialst-stp/kenon-frontend:latest
-    build: 
-      context: ./openimis-fe_js/
-      dockerfile: Dockerfile
+    container_name: ${PROJECT_NAME:-openimis}-frontend
+    image: ghcr.io/stssocialst-stp/openimis-fe-stp:latest
     restart: always
     env_file: .env
     environment:
@@ -37,10 +30,10 @@ services:
       - OPENIMIS_CONF_JSON=${OPENIMIS_FE_CONF_JSON}
       - OPENSEARCH_BASIC_TOKEN=${OPENSEARCH_BASIC_TOKEN}
     networks:
-      openimis-net:
+      - openimis-net
     ports:
-      - 4005:80    # frontend HTTP
-      - 4006:443   # frontend HTTPS
+      - ${HTTP_PORT:-4005}:80
+      - ${HTTPS_PORT:-4006}:443
     depends_on:
       - backend
     volumes:
@@ -50,32 +43,33 @@ services:
 
   backend:
     <<: *default-api
-    container_name: kenon-backend
+    container_name: ${PROJECT_NAME:-openimis}-api
     command: start
     env_file: .env
     ports:
-      - 4007:8000   # backend exposto na porta 4007
+      - 4007:8000
 
   worker:
     <<: *default-api
-    container_name: kenon-worker
+    container_name: ${PROJECT_NAME:-openimis}-worker
     command: worker
     env_file: .env
     ports:
-      - 4009:8000   # worker exposto na porta 4009
+      - 4008:8000
 
   rabbitmq:
-    container_name: kenon-rabbitmq
+    container_name: ${PROJECT_NAME:-openimis}-rabbitmq
     image: rabbitmq:3-management
     restart: always
     networks:
-      openimis-net:
+      - openimis-net
     ports:
-      - 4008:5672   # rabbitmq exposto na porta 4008
+      - 5672:5672
+      - 4011:15672
 
 networks:
   openimis-net:
-    name: kenon-net
+    external: true
 
 volumes:
   database:
