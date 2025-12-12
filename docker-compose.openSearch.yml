@@ -17,7 +17,7 @@ services:
     ports:
       - 4010:9200 # <-- OPEN SEARCH API Mapeado para 4010 (Conforme seu Nginx)
     networks:
-      openimis-net:
+      kenon-network-net:
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:2.9.0
@@ -32,12 +32,11 @@ services:
     ports:
       - 4009:5601 # <-- DASHBOARDS Mapeado para 4009 (Conforme seu Nginx)
     networks:
-      openimis-net:
+      kenon-network-net:
 
 volumes:
   opensearch-data1:
 
-# networks:
-#   openimis-net:
-#     name: "${PROJECT_NAME:-openimis}-net"
-#     external: true
+networks:
+  kenon-network-net:
+    external: true
