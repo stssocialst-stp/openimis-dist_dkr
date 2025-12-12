@@ -1,4 +1,3 @@
-#version: '3.7'
 services:
   db:
     container_name: ${PROJECT_NAME:-openimis}-db
@@ -19,6 +18,9 @@ services:
       - database:/var/lib/postgresql/data
     restart: always
     ports:
-      - 5437:5432
+      - 5433:5432
     networks:
-      openimis-net:
+      - openimis-net 
+
+volumes:
+  database:
