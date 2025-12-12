@@ -24,3 +24,7 @@ services:
 
 volumes:
   database:
+
+networks:
+  kenon-stp-net:
+    external: true
