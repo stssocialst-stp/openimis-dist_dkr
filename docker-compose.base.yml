@@ -34,8 +34,6 @@ services:
     ports:
       - ${HTTP_PORT:-4005}:80
       - ${HTTPS_PORT:-4006}:443
-    depends_on:
-      - backend
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
