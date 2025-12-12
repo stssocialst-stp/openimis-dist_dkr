@@ -20,7 +20,7 @@ services:
     ports:
       - 5433:5432
     networks:
-      - openimis-net 
+      - kenon-stp-net
 
 volumes:
   database:
