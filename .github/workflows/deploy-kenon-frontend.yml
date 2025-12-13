@@ -57,5 +57,6 @@ jobs:
       - name: Deploy frontend
         run: |
           cd $GITHUB_WORKSPACE
-          docker compose -f docker-compose.base.yml pull frontend
-          docker compose -f docker-compose.base.yml up -d frontend
+          docker compose --env-file .env -f docker-compose.base.yml pull frontend
+          docker compose --env-file .env -f docker-compose.base.yml up -d frontend
+
