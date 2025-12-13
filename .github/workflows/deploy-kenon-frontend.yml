@@ -46,13 +46,42 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Create .env file from runner env
+      - name: Create .env file from workflow env
         run: |
-          echo "Criando arquivo .env"
-          : > $GITHUB_WORKSPACE/.env
-          for var in PROJECT_NAME DOMAIN HTTP_PORT HTTPS_PORT GATEWAY_PORT_S DB_PASSWORD DB_USER DB_NAME DB_HOST DB_PORT DB_ENGINE SITE_ROOT DB_TAG BE_TAG FE_TAG OPENIMIS_FE_CONF_JSON CSRF_TRUSTED_ORIGINS REACT_APP_API_URL DJANGO_LOG_LEVEL DJANGO_LOG_HANDLER DJANGO_MIGRATE EMAIL_HOST EMAIL_PORT EMAIL_HOST_USER EMAIL_HOST_PASSWORD EMAIL_USE_TLS OPENSEARCH_ADMIN OPENSEARCH_PASSWORD OPENSEARCH_BASIC_TOKEN OPENSEARCH_HOST CELERY_BROKER_URL DATA_UPLOAD_MAX_MEMORY_SIZE; do
-            echo "$var=${!var}" >> $GITHUB_WORKSPACE/.env
-          done
+          cat <<EOF > $GITHUB_WORKSPACE/.env
+            PROJECT_NAME=${PROJECT_NAME}
+            DOMAIN=${DOMAIN}
+            HTTP_PORT=${HTTP_PORT}
+            HTTPS_PORT=${HTTPS_PORT}
+            GATEWAY_PORT_S=${GATEWAY_PORT_S}
+            DB_PASSWORD=${DB_PASSWORD}
+            DB_USER=${DB_USER}
+            DB_NAME=${DB_NAME}
+            DB_HOST=${DB_HOST}
+            DB_PORT=${DB_PORT}
+            DB_ENGINE=${DB_ENGINE}
+            SITE_ROOT=${SITE_ROOT}
+            DB_TAG=${DB_TAG}
+            BE_TAG=${BE_TAG}
+            FE_TAG=${FE_TAG}
+            OPENIMIS_FE_CONF_JSON=${OPENIMIS_FE_CONF_JSON}
+            CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+            REACT_APP_API_URL=${REACT_APP_API_URL}
+            DJANGO_LOG_LEVEL=${DJANGO_LOG_LEVEL}
+            DJANGO_LOG_HANDLER=${DJANGO_LOG_HANDLER}
+            DJANGO_MIGRATE=${DJANGO_MIGRATE}
+            EMAIL_HOST=${EMAIL_HOST}
+            EMAIL_PORT=${EMAIL_PORT}
+            EMAIL_HOST_USER=${EMAIL_HOST_USER}
+            EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+            EMAIL_USE_TLS=${EMAIL_USE_TLS}
+            OPENSEARCH_ADMIN=${OPENSEARCH_ADMIN}
+            OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD}
+            OPENSEARCH_BASIC_TOKEN=${OPENSEARCH_BASIC_TOKEN}
+            OPENSEARCH_HOST=${OPENSEARCH_HOST}
+            CELERY_BROKER_URL=${CELERY_BROKER_URL}
+            DATA_UPLOAD_MAX_MEMORY_SIZE=${DATA_UPLOAD_MAX_MEMORY_SIZE}
+            EOF
 
       - name: Deploy frontend
         run: |
