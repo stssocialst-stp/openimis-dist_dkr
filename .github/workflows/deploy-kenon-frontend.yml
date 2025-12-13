@@ -1,22 +1,16 @@
-name: Deploy Kenon Frontend
-
+name: Deploy Frontend
 on:
-  workflow_dispatch:
-    inputs:
-      image_tag:
-        description: 'latest'
-        required: true
-        default: 'latest'
-
+  repository_dispatch:
+    types: deploy-kenon-frontend
 jobs:
   deploy-frontend:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout repo central
-        uses: actions/checkout@v3
-
-      - name: Deploy frontend
-        run: |
-          cd /app
-          docker compose pull frontend:${{ github.event.inputs.image_tag }}
-          docker compose up -d frontend
+      runs-on: self-hosted
+      steps:
+        - name: Checkout repo central
+          uses: actions/checkout@v3
+  
+        - name: Deploy frontend
+          run: |
+            cd latest_openimis-dist_dkr
+            docker compose -f docker-compose.base.yml pull frontend
+            docker compose -f docker-compose.base.yml up -d frontend
