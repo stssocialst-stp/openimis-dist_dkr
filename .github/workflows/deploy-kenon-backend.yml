@@ -2,15 +2,58 @@ name: Deploy Backend
 on:
   repository_dispatch:
     types: deploy-kenon-backend
+
 jobs:
   deploy-backend:
-      runs-on: self-hosted
-      steps:
-        - name: Checkout repo central
-          uses: actions/checkout@v3
-  
-        - name: Deploy backend
-          run: |
-            cd $GITHUB_WORKSPACE
-            docker compose -f docker-compose.base.yml pull backend
-            docker compose -f docker-compose.base.yml up -d backend
+    runs-on: self-hosted
+    env:
+      PROJECT_NAME: ${{ env.PROJECT_NAME }}
+      DOMAIN: ${{ env.DOMAIN }}
+      HTTP_PORT: ${{ env.HTTP_PORT }}
+      HTTPS_PORT: ${{ env.HTTPS_PORT }}
+      GATEWAY_PORT_S: ${{ env.GATEWAY_PORT_S }}
+      DB_PASSWORD: ${{ env.DB_PASSWORD }}
+      DB_USER: ${{ env.DB_USER }}
+      DB_NAME: ${{ env.DB_NAME }}
+      DB_HOST: ${{ env.DB_HOST }}
+      DB_PORT: ${{ env.DB_PORT }}
+      DB_ENGINE: ${{ env.DB_ENGINE }}
+      SITE_ROOT: ${{ env.SITE_ROOT }}
+      DB_TAG: ${{ env.DB_TAG }}
+      BE_TAG: ${{ env.BE_TAG }}
+      FE_TAG: ${{ env.FE_TAG }}
+      OPENIMIS_FE_CONF_JSON: ${{ env.OPENIMIS_FE_CONF_JSON }}
+      CSRF_TRUSTED_ORIGINS: ${{ env.CSRF_TRUSTED_ORIGINS }}
+      REACT_APP_API_URL: ${{ env.REACT_APP_API_URL }}
+      DJANGO_LOG_LEVEL: ${{ env.DJANGO_LOG_LEVEL }}
+      DJANGO_LOG_HANDLER: ${{ env.DJANGO_LOG_HANDLER }}
+      DJANGO_MIGRATE: ${{ env.DJANGO_MIGRATE }}
+      EMAIL_HOST: ${{ env.EMAIL_HOST }}
+      EMAIL_PORT: ${{ env.EMAIL_PORT }}
+      EMAIL_HOST_USER: ${{ env.EMAIL_HOST_USER }}
+      EMAIL_HOST_PASSWORD: ${{ env.EMAIL_HOST_PASSWORD }}
+      EMAIL_USE_TLS: ${{ env.EMAIL_USE_TLS }}
+      OPENSEARCH_ADMIN: ${{ env.OPENSEARCH_ADMIN }}
+      OPENSEARCH_PASSWORD: ${{ env.OPENSEARCH_PASSWORD }}
+      OPENSEARCH_BASIC_TOKEN: ${{ env.OPENSEARCH_BASIC_TOKEN }}
+      OPENSEARCH_HOST: ${{ env.OPENSEARCH_HOST }}
+      CELERY_BROKER_URL: ${{ env.CELERY_BROKER_URL }}
+      DATA_UPLOAD_MAX_MEMORY_SIZE: ${{ env.DATA_UPLOAD_MAX_MEMORY_SIZE }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Create .env file from workflow env
+        run: |
+          echo "Criando arquivo .env"
+          : > $GITHUB_WORKSPACE/.env
+          for var in PROJECT_NAME DOMAIN HTTP_PORT HTTPS_PORT GATEWAY_PORT_S DB_PASSWORD DB_USER DB_NAME DB_HOST DB_PORT DB_ENGINE SITE_ROOT DB_TAG BE_TAG FE_TAG OPENIMIS_FE_CONF_JSON CSRF_TRUSTED_ORIGINS REACT_APP_API_URL DJANGO_LOG_LEVEL DJANGO_LOG_HANDLER DJANGO_MIGRATE EMAIL_HOST EMAIL_PORT EMAIL_HOST_USER EMAIL_HOST_PASSWORD EMAIL_USE_TLS OPENSEARCH_ADMIN OPENSEARCH_PASSWORD OPENSEARCH_BASIC_TOKEN OPENSEARCH_HOST CELERY_BROKER_URL DATA_UPLOAD_MAX_MEMORY_SIZE; do
+            echo "$var=${!var}" >> $GITHUB_WORKSPACE/.env
+          done
+
+      - name: Deploy backend
+        run: |
+          cd $GITHUB_WORKSPACE
+          docker compose -f docker-compose.base.yml pull backend
+          docker compose -f docker-compose.base.yml up -d backend
