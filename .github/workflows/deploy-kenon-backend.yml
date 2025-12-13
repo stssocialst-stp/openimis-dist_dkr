@@ -1,23 +1,16 @@
-name: Deploy Kenon Backend
-
+name: Deploy Backend
 on:
-  workflow_dispatch:
-    inputs:
-      image_tag:
-        description: 'latest'
-        required: true
-        default: 'latest'
-
+  repository_dispatch:
+    types: deploy-kenon-backend
 jobs:
   deploy-backend:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout repo central
-        uses: actions/checkout@v3
-
-      - name: Deploy backend
-        run: |
-          cd /app
-          docker compose pull backend:${{ github.event.inputs.image_tag }}
-          docker compose up -d backend
-          docker exec backend python manage.py migrate
+      runs-on: self-hosted
+      steps:
+        - name: Checkout repo central
+          uses: actions/checkout@v3
+  
+        - name: Deploy backend
+          run: |
+            cd latest_openimis-dist_dkr
+            docker compose -f docker-compose.base.yml pull backend
+            docker compose -f docker-compose.base.yml up -d backend
