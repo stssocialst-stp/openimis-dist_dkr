@@ -11,6 +11,6 @@ jobs:
   
         - name: Deploy frontend
           run: |
-            cd latest_openimis-dist_dkr
+            cd $GITHUB_WORKSPACE
             docker compose -f docker-compose.base.yml pull frontend
             docker compose -f docker-compose.base.yml up -d frontend
