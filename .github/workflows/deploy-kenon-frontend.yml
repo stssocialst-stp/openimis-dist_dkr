@@ -7,44 +7,46 @@ jobs:
   deploy-frontend:
     runs-on: self-hosted
     env:
-      PROJECT_NAME: ${{ env.PROJECT_NAME }}
-      DOMAIN: ${{ env.DOMAIN }}
-      HTTP_PORT: ${{ env.HTTP_PORT }}
-      HTTPS_PORT: ${{ env.HTTPS_PORT }}
-      GATEWAY_PORT_S: ${{ env.GATEWAY_PORT_S }}
-      DB_PASSWORD: ${{ env.DB_PASSWORD }}
-      DB_USER: ${{ env.DB_USER }}
-      DB_NAME: ${{ env.DB_NAME }}
-      DB_HOST: ${{ env.DB_HOST }}
-      DB_PORT: ${{ env.DB_PORT }}
-      DB_ENGINE: ${{ env.DB_ENGINE }}
-      SITE_ROOT: ${{ env.SITE_ROOT }}
-      DB_TAG: ${{ env.DB_TAG }}
-      BE_TAG: ${{ env.BE_TAG }}
-      FE_TAG: ${{ env.FE_TAG }}
-      OPENIMIS_FE_CONF_JSON: ${{ env.OPENIMIS_FE_CONF_JSON }}
-      CSRF_TRUSTED_ORIGINS: ${{ env.CSRF_TRUSTED_ORIGINS }}
-      REACT_APP_API_URL: ${{ env.REACT_APP_API_URL }}
-      DJANGO_LOG_LEVEL: ${{ env.DJANGO_LOG_LEVEL }}
-      DJANGO_LOG_HANDLER: ${{ env.DJANGO_LOG_HANDLER }}
-      DJANGO_MIGRATE: ${{ env.DJANGO_MIGRATE }}
-      EMAIL_HOST: ${{ env.EMAIL_HOST }}
-      EMAIL_PORT: ${{ env.EMAIL_PORT }}
-      EMAIL_HOST_USER: ${{ env.EMAIL_HOST_USER }}
-      EMAIL_HOST_PASSWORD: ${{ env.EMAIL_HOST_PASSWORD }}
-      EMAIL_USE_TLS: ${{ env.EMAIL_USE_TLS }}
-      OPENSEARCH_ADMIN: ${{ env.OPENSEARCH_ADMIN }}
-      OPENSEARCH_PASSWORD: ${{ env.OPENSEARCH_PASSWORD }}
-      OPENSEARCH_BASIC_TOKEN: ${{ env.OPENSEARCH_BASIC_TOKEN }}
-      OPENSEARCH_HOST: ${{ env.OPENSEARCH_HOST }}
-      CELERY_BROKER_URL: ${{ env.CELERY_BROKER_URL }}
-      DATA_UPLOAD_MAX_MEMORY_SIZE: ${{ env.DATA_UPLOAD_MAX_MEMORY_SIZE }}
+      # Aqui você pode listar as variáveis se quiser sobrescrever ou garantir que existam
+      # Se o runner já tem elas, pode nem ser necessário
+      PROJECT_NAME: $PROJECT_NAME
+      DOMAIN: $DOMAIN
+      HTTP_PORT: $HTTP_PORT
+      HTTPS_PORT: $HTTPS_PORT
+      GATEWAY_PORT_S: $GATEWAY_PORT_S
+      DB_PASSWORD: $DB_PASSWORD
+      DB_USER: $DB_USER
+      DB_NAME: $DB_NAME
+      DB_HOST: $DB_HOST
+      DB_PORT: $DB_PORT
+      DB_ENGINE: $DB_ENGINE
+      SITE_ROOT: $SITE_ROOT
+      DB_TAG: $DB_TAG
+      BE_TAG: $BE_TAG
+      FE_TAG: $FE_TAG
+      OPENIMIS_FE_CONF_JSON: $OPENIMIS_FE_CONF_JSON
+      CSRF_TRUSTED_ORIGINS: $CSRF_TRUSTED_ORIGINS
+      REACT_APP_API_URL: $REACT_APP_API_URL
+      DJANGO_LOG_LEVEL: $DJANGO_LOG_LEVEL
+      DJANGO_LOG_HANDLER: $DJANGO_LOG_HANDLER
+      DJANGO_MIGRATE: $DJANGO_MIGRATE
+      EMAIL_HOST: $EMAIL_HOST
+      EMAIL_PORT: $EMAIL_PORT
+      EMAIL_HOST_USER: $EMAIL_HOST_USER
+      EMAIL_HOST_PASSWORD: $EMAIL_HOST_PASSWORD
+      EMAIL_USE_TLS: $EMAIL_USE_TLS
+      OPENSEARCH_ADMIN: $OPENSEARCH_ADMIN
+      OPENSEARCH_PASSWORD: $OPENSEARCH_PASSWORD
+      OPENSEARCH_BASIC_TOKEN: $OPENSEARCH_BASIC_TOKEN
+      OPENSEARCH_HOST: $OPENSEARCH_HOST
+      CELERY_BROKER_URL: $CELERY_BROKER_URL
+      DATA_UPLOAD_MAX_MEMORY_SIZE: $DATA_UPLOAD_MAX_MEMORY_SIZE
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Create .env file from workflow env
+      - name: Create .env file from runner env
         run: |
           echo "Criando arquivo .env"
           : > $GITHUB_WORKSPACE/.env
