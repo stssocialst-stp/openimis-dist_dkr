@@ -43,8 +43,20 @@ jobs:
       DATA_UPLOAD_MAX_MEMORY_SIZE: ${{ vars.DATA_UPLOAD_MAX_MEMORY_SIZE }}
 
     steps:
+
+      - name: Fixing permissions
+        run: |
+          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
+          sudo chmod -R u+rwX $GITHUB_WORKSPACE
+
+      - name: Dropping directories
+        run: |
+          sudo rm -rf $GITHUB_WORKSPACE/data/certbot
+    
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          clean: false
 
       - name: Create .env file from workflow env
         run: |
