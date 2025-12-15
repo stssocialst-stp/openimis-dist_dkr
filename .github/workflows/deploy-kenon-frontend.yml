@@ -83,6 +83,15 @@ jobs:
             DATA_UPLOAD_MAX_MEMORY_SIZE=${DATA_UPLOAD_MAX_MEMORY_SIZE}
             EOF
 
+      - name: Remove old frontend container if exists
+        run: |
+          if [ "$(docker ps -a -q -f name=PROJECT_NAME-frontend)" ]; then
+            echo "Removing old frontend container..."
+            docker rm -f PROJECT_NAME-frontend
+          else
+            echo "No old frontend container found."
+          fi
+
       - name: Deploy frontend
         run: |
           cd $GITHUB_WORKSPACE
