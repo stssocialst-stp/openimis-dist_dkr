@@ -12,8 +12,6 @@ jobs:
       HTTP_PORT: ${{ vars.HTTP_PORT }}
       HTTPS_PORT: ${{ vars.HTTPS_PORT }}
       GATEWAY_PORT_S: ${{ vars.GATEWAY_PORT_S }}
-      # Atenção: Credenciais como DB_PASSWORD DEVEM ser Secrets (Secrets.DB_PASSWORD)
-      # mas estou mantendo a estrutura original para fins de demonstração
       DB_PASSWORD: ${{ vars.DB_PASSWORD }} 
       DB_USER: ${{ vars.DB_USER }}
       DB_NAME: ${{ vars.DB_NAME }}
