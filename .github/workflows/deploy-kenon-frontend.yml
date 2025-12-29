@@ -44,12 +44,8 @@ jobs:
 
       - name: Fixing permissions
         run: |
-          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
-          sudo chmod -R u+rwX $GITHUB_WORKSPACE
-
-      - name: Dropping directories
-        run: |
-          sudo rm -rf $GITHUB_WORKSPACE/data/certbot
+          chown -R $USER:$USER $GITHUB_WORKSPACE
+          chmod -R u+rwX $GITHUB_WORKSPACE
     
       - name: Checkout repo
         uses: actions/checkout@v3
