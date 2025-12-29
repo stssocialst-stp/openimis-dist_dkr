@@ -37,7 +37,7 @@ services:
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
-      - ./conf/nginx:/conf/
+    #  - ./conf/nginx:/conf/
 
   backend:
     <<: *default-api
