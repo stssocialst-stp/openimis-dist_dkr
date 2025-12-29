@@ -95,9 +95,9 @@ jobs:
 
       - name: Remove old frontend container if exists
         run: |
-          if [ "$(docker ps -a -q -f name=PROJECT_NAME-frontend)" ]; then
+          if [ "$(docker ps -a -q -f name=kenon-frontend)" ]; then
             echo "Removing old frontend container..."
-            docker rm -f PROJECT_NAME-frontend
+            docker rm -f kenon-frontend
           else
             echo "No old frontend container found."
           fi
