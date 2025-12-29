@@ -1,5 +1,5 @@
 x-api: &default-api
-  image: ghcr.io/stssocialst-stp/kenon-backend:latest
+  image: ghcr.io/stssocialst-stp/kenon-backend:${BE_TAG:-latest}
   environment:
     - DB_DEFAULT=${DB_DEFAULT:-postgresql}
     - DB_HOST=${DB_HOST}
@@ -21,7 +21,7 @@ x-api: &default-api
 services:
   frontend:
     container_name: ${PROJECT_NAME:-openimis}-frontend
-    image: ghcr.io/stssocialst-stp/kenon-frontend:latest
+    image: ghcr.io/stssocialst-stp/kenon-frontend:${FE_TAG:-latest}
     restart: always
     env_file: .env
     environment:
