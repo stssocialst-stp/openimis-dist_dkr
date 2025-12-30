@@ -61,7 +61,7 @@ jobs:
             DB_ENGINE=${DB_ENGINE}
             SITE_ROOT=${SITE_ROOT}
             DB_TAG=${DB_TAG}
-            BE_TAG=${BE_TAG}  # Tag para o backend
+            BE_TAG=${BE_TAG}
             OPENIMIS_FE_CONF_JSON=${OPENIMIS_FE_CONF_JSON}
             CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
             REACT_APP_API_URL=${REACT_APP_API_URL}
