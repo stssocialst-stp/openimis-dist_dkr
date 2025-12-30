@@ -6,7 +6,6 @@ on:
 jobs:
   deploy-frontend:
     runs-on: coremis-prod
-    needs: publish-docker-prod-image
     env:
       PROJECT_NAME: ${{ vars.PROJECT_NAME }}
       DOMAIN: ${{ vars.DOMAIN }}
