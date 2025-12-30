@@ -20,7 +20,7 @@ jobs:
       DB_ENGINE: ${{ vars.DB_ENGINE }}
       SITE_ROOT: ${{ vars.SITE_ROOT }}
       DB_TAG: ${{ vars.DB_TAG }}
-      BE_TAG: ${{ needs.publish-docker-prod-image.outputs.be_tag }} 
+      BE_TAG: ${{ github.event.client_payload.be_tag }}
       OPENIMIS_FE_CONF_JSON: ${{ vars.OPENIMIS_FE_CONF_JSON }}
       CSRF_TRUSTED_ORIGINS: ${{ vars.CSRF_TRUSTED_ORIGINS }}
       REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
