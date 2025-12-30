@@ -22,7 +22,7 @@ jobs:
       SITE_ROOT: ${{ vars.SITE_ROOT }}
       DB_TAG: ${{ vars.DB_TAG }}
       BE_TAG: ${{ vars.BE_TAG }}
-      FE_TAG: ${{ needs.publish-docker-prod-image.outputs.fe_tag }}
+      FE_TAG: ${{ github.event.client_payload.fe_tag }}
       OPENIMIS_FE_CONF_JSON: ${{ vars.OPENIMIS_FE_CONF_JSON }}
       CSRF_TRUSTED_ORIGINS: ${{ vars.CSRF_TRUSTED_ORIGINS }}
       REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
@@ -65,7 +65,7 @@ jobs:
             SITE_ROOT=${SITE_ROOT}
             DB_TAG=${DB_TAG}
             BE_TAG=${BE_TAG}
-            FE_TAG=${FE_TAG}  # A tag do frontend aqui
+            FE_TAG=${FE_TAG}
             OPENIMIS_FE_CONF_JSON=${OPENIMIS_FE_CONF_JSON}
             CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
             REACT_APP_API_URL=${REACT_APP_API_URL}
