@@ -39,6 +39,7 @@ jobs:
       OPENSEARCH_HOST: ${{ vars.OPENSEARCH_HOST }}
       CELERY_BROKER_URL: ${{ vars.CELERY_BROKER_URL }}
       DATA_UPLOAD_MAX_MEMORY_SIZE: ${{ vars.DATA_UPLOAD_MAX_MEMORY_SIZE }}
+      FEED_DATA: ${{ vars.FEED_DATA }}
 
     steps:
 
@@ -82,6 +83,7 @@ jobs:
             OPENSEARCH_HOST=${OPENSEARCH_HOST}
             CELERY_BROKER_URL=${CELERY_BROKER_URL}
             DATA_UPLOAD_MAX_MEMORY_SIZE=${DATA_UPLOAD_MAX_MEMORY_SIZE}
+            FEED_DATA=${FEED_DATA}
             EOF
       - name: Deploy backend
         run: |
@@ -124,6 +126,7 @@ jobs:
       OPENSEARCH_HOST: ${{ vars.OPENSEARCH_HOST }}
       CELERY_BROKER_URL: ${{ vars.CELERY_BROKER_URL }}
       DATA_UPLOAD_MAX_MEMORY_SIZE: ${{ vars.DATA_UPLOAD_MAX_MEMORY_SIZE }}
+      FEED_DATA: ${{ vars.FEED_DATA }}
 
     steps:
    
@@ -167,6 +170,7 @@ jobs:
             OPENSEARCH_HOST=${OPENSEARCH_HOST}
             CELERY_BROKER_URL=${CELERY_BROKER_URL}
             DATA_UPLOAD_MAX_MEMORY_SIZE=${DATA_UPLOAD_MAX_MEMORY_SIZE}
+            FEED_DATA=${FEED_DATA}
             EOF
 
       - name: Remove old frontend container if exists
