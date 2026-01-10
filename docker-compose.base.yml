@@ -12,6 +12,7 @@ x-api: &default-api
     - CELERY_BROKER_URL=amqp://rabbitmq:5672
     - MODE=${MODE:-Prod}
     - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+    - FEED_DATA=${FEED_DATA:-False}
   volumes:
     - photos:/openimis-be/openIMIS/images/insurees
   networks:
