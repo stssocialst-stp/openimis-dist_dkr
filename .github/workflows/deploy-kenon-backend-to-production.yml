@@ -5,7 +5,8 @@ on:
 
 jobs:
   deploy-backend-prod:
-    runs-on: coremis-prod 
+    runs-on: coremis-prod
+    environment: client-prod
     env:
       PROJECT_NAME: ${{ vars.PROJECT_NAME }}
       DOMAIN: ${{ vars.DOMAIN }}

@@ -6,6 +6,7 @@ on:
 jobs:
   deploy-backend:
     runs-on: self-hosted
+    environment: sintaxy-staging
     env:
       PROJECT_NAME: ${{ vars.PROJECT_NAME }}
       DOMAIN: ${{ vars.DOMAIN }}
@@ -93,6 +94,7 @@ jobs:
 
   deploy-backend-dev-client:
     runs-on: coremis-dev
+    environment: client-dev
     env:
       PROJECT_NAME: ${{ vars.PROJECT_NAME }}
       DOMAIN: ${{ vars.DOMAIN }}
