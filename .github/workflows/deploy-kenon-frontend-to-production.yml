@@ -106,3 +106,9 @@ jobs:
           cd $GITHUB_WORKSPACE
           docker compose --env-file .env -f docker-compose.base.yml pull frontend
           docker compose --env-file .env -f docker-compose.base.yml up -d frontend
+
+      - name: Setup SSL certificate
+        run: |
+          cd $GITHUB_WORKSPACE
+          chmod +x init-letsencrypt.sh
+          ./init-letsencrypt.sh

@@ -21,7 +21,7 @@ jobs:
       DB_ENGINE: ${{ vars.DB_ENGINE }}
       SITE_ROOT: ${{ vars.SITE_ROOT }}
       DB_TAG: ${{ vars.DB_TAG }}
-      BE_TAG: ${{ vars.BE_TAG }}
+      BE_TAG: ${{ github.event.client_payload.be_tag || vars.BE_TAG }}
       FE_TAG: ${{ vars.FE_TAG }}
       OPENIMIS_FE_CONF_JSON: ${{ vars.OPENIMIS_FE_CONF_JSON }}
       CSRF_TRUSTED_ORIGINS: ${{ vars.CSRF_TRUSTED_ORIGINS }}
@@ -97,7 +97,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           docker compose --env-file .env -f docker-compose.base.yml pull backend
-          docker compose --env-file .env -f docker-compose.base.yml up -d backend worker
+          docker compose --env-file .env -f docker-compose.base.yml up -d rabbitmq backend worker
 
   deploy-backend-dev-client:
     runs-on: coremis-dev
@@ -108,7 +108,7 @@ jobs:
       HTTP_PORT: ${{ vars.HTTP_PORT }}
       HTTPS_PORT: ${{ vars.HTTPS_PORT }}
       GATEWAY_PORT_S: ${{ vars.GATEWAY_PORT_S }}
-      DB_PASSWORD: ${{ vars.DB_PASSWORD }} 
+      DB_PASSWORD: ${{ vars.DB_PASSWORD }}
       DB_USER: ${{ vars.DB_USER }}
       DB_NAME: ${{ vars.DB_NAME }}
       DB_HOST: ${{ vars.DB_HOST }}
@@ -116,7 +116,7 @@ jobs:
       DB_ENGINE: ${{ vars.DB_ENGINE }}
       SITE_ROOT: ${{ vars.SITE_ROOT }}
       DB_TAG: ${{ vars.DB_TAG }}
-      BE_TAG: ${{ vars.BE_TAG }}
+      BE_TAG: ${{ github.event.client_payload.be_tag || vars.BE_TAG }}
       FE_TAG: ${{ vars.FE_TAG }}
       OPENIMIS_FE_CONF_JSON: ${{ vars.OPENIMIS_FE_CONF_JSON }}
       CSRF_TRUSTED_ORIGINS: ${{ vars.CSRF_TRUSTED_ORIGINS }}
@@ -209,4 +209,4 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           docker compose --env-file .env -f docker-compose.base.yml pull backend
-          docker compose --env-file .env -f docker-compose.base.yml up -d backend worker
+          docker compose --env-file .env -f docker-compose.base.yml up -d rabbitmq backend worker

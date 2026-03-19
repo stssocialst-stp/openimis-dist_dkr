@@ -109,4 +109,4 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           docker compose --env-file .env -f docker-compose.base.yml pull backend
-          docker compose --env-file .env -f docker-compose.base.yml up -d backend worker
+          docker compose --env-file .env -f docker-compose.base.yml up -d rabbitmq backend worker
