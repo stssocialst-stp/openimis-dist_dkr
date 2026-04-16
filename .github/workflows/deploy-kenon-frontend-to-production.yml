@@ -22,7 +22,7 @@ jobs:
       SITE_ROOT: ${{ vars.SITE_ROOT }}
       DB_TAG: ${{ vars.DB_TAG }}
       BE_TAG: ${{ vars.BE_TAG }}
-      FE_TAG: ${{ github.event.client_payload.fe_tag }}
+      FE_TAG: ${{ github.event.client_payload.fe_tag || vars.FE_TAG }}
       OPENIMIS_FE_CONF_JSON: ${{ vars.OPENIMIS_FE_CONF_JSON }}
       CSRF_TRUSTED_ORIGINS: ${{ vars.CSRF_TRUSTED_ORIGINS }}
       REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
