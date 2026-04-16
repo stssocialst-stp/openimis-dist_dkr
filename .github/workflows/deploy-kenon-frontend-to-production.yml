@@ -110,5 +110,9 @@ jobs:
       - name: Setup SSL certificate
         run: |
           cd $GITHUB_WORKSPACE
-          chmod +x init-letsencrypt.sh
-          ./init-letsencrypt.sh
+          if [ -f init-letsencrypt.sh ]; then
+            chmod +x init-letsencrypt.sh
+            ./init-letsencrypt.sh
+          else
+            echo "init-letsencrypt.sh not found, skipping SSL setup"
+          fi
