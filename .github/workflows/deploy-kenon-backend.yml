@@ -7,6 +7,9 @@ jobs:
   deploy-backend:
     runs-on: self-hosted
     environment: sintaxy-staging
+    concurrency:
+      group: deploy-sintaxy
+      cancel-in-progress: false
     env:
       PROJECT_NAME: ${{ vars.PROJECT_NAME }}
       DOMAIN: ${{ vars.DOMAIN }}
@@ -102,6 +105,9 @@ jobs:
   deploy-backend-dev-client:
     runs-on: coremis-dev
     environment: client-dev
+    concurrency:
+      group: deploy-client-dev
+      cancel-in-progress: false
     env:
       PROJECT_NAME: ${{ vars.PROJECT_NAME }}
       DOMAIN: ${{ vars.DOMAIN }}
