@@ -62,9 +62,6 @@ services:
     restart: always
     networks:
       - kenon-stp-net
-    ports:
-      - 5672:5672
-      - 4011:15672
 
 networks:
   kenon-stp-net:
