@@ -125,4 +125,15 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           docker compose --env-file .env -f docker-compose.base.yml pull backend
-          docker compose --env-file .env -f docker-compose.base.yml up -d rabbitmq backend worker
+          docker compose --env-file .env -f docker-compose.base.yml up -d rabbitmq --force-recreate backend worker
+
+      - name: Install STP fork modules (fresh code)
+        run: |
+          cd $GITHUB_WORKSPACE
+          for c in ${PROJECT_NAME}-api ${PROJECT_NAME}-worker; do
+            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-payroll_py@stp-changes"
+            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-individual_py@stp-changes"
+            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-grievance_social_protection_py@develop"
+            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-contribution_plan_py@release/24.04"
+            docker restart "$c"
+          done
