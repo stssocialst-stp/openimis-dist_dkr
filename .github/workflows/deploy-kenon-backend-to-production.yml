@@ -43,11 +43,11 @@ jobs:
       BISTP_PORT: ${{ vars.BISTP_PORT }}
       BISTP_API_BASE_PATH: ${{ vars.BISTP_API_BASE_PATH }}
       BISTP_CLIENT_ID: ${{ vars.BISTP_CLIENT_ID }}
-      BISTP_CLIENT_SECRET: ${{ secrets.BISTP_CLIENT_SECRET }}
+      BISTP_CLIENT_SECRET: ${{ secrets.BISTP_CLIENT_SECRET || vars.BISTP_CLIENT_SECRET }}
       BISTP_TOKEN_ENDPOINT: ${{ vars.BISTP_TOKEN_ENDPOINT }}
       BISTP_SSL_VERIFY: ${{ vars.BISTP_SSL_VERIFY }}
       BISTP_TIMEOUT: ${{ vars.BISTP_TIMEOUT }}
-      BISTP_CALLBACK_TOKEN: ${{ secrets.BISTP_CALLBACK_TOKEN }}
+      BISTP_CALLBACK_TOKEN: ${{ secrets.BISTP_CALLBACK_TOKEN || vars.BISTP_CALLBACK_TOKEN }}
 
     steps:
       - name: Checkout repo
