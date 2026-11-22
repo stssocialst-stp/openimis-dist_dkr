@@ -1,0 +1,57 @@
+# Derived backend image used by the deploy workflows.
+#
+# The base image already contains the STP fork modules pinned in
+# openimis-be_py/openimis.json, but that image is only rebuilt when the
+# openimis-be_py repository changes. Pushes to the module repositories
+# (payroll, individual, ...) do not trigger a backend rebuild, so the deploy
+# workflow builds this thin layer to pick up the latest module code.
+#
+# The modules are cloned with --depth 1 and installed with --no-build-isolation
+# to keep the build memory footprint low. The previous approach (pip install
+# inside the running api/worker containers) was being OOM-killed with exit
+# code 137.
+#
+# The four packages are uninstalled first so the local checkout is always
+# reinstalled, even when the version number did not change. Dependencies are
+# left in place (the base image already provides them); if a fork starts
+# requiring a new package, pip will install it because the install does not
+# use --no-deps.
+
+ARG BASE_IMAGE=ghcr.io/stssocialst-stp/kenon-backend:latest
+FROM ${BASE_IMAGE}
+
+# Keep these refs in sync with openimis-be_py/openimis.json.
+ARG PAYROLL_REF=stp-changes
+ARG INDIVIDUAL_REF=stp-changes
+ARG GRIEVANCE_REF=develop
+ARG CONTRIBUTION_PLAN_REF=release/24.04
+
+USER root
+
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    GIT_TERMINAL_PROMPT=0
+
+RUN set -eux; \
+    python -m pip install --no-cache-dir --no-compile --upgrade setuptools wheel; \
+    python -m pip uninstall -y \
+        openimis-be-payroll \
+        openimis-be-individual \
+        openimis-be-grievance_social_protection \
+        openimis-be-contribution-plan; \
+    mkdir -p /tmp/stp-mods; \
+    git clone --depth 1 --branch "${PAYROLL_REF}" \
+        https://github.com/stssocialst-stp/openimis-be-payroll_py /tmp/stp-mods/payroll; \
+    git clone --depth 1 --branch "${INDIVIDUAL_REF}" \
+        https://github.com/stssocialst-stp/openimis-be-individual_py /tmp/stp-mods/individual; \
+    git clone --depth 1 --branch "${GRIEVANCE_REF}" \
+        https://github.com/stssocialst-stp/openimis-be-grievance_social_protection_py /tmp/stp-mods/grievance; \
+    git clone --depth 1 --branch "${CONTRIBUTION_PLAN_REF}" \
+        https://github.com/stssocialst-stp/openimis-be-contribution_plan_py /tmp/stp-mods/contribution_plan; \
+    python -m pip install --no-cache-dir --no-build-isolation --no-compile --upgrade \
+        /tmp/stp-mods/payroll \
+        /tmp/stp-mods/individual \
+        /tmp/stp-mods/grievance \
+        /tmp/stp-mods/contribution_plan; \
+    { for d in /tmp/stp-mods/*; do echo "$(basename "$d") $(git -C "$d" rev-parse HEAD)"; done; } > /openimis-be/stp-modules.txt; \
+    rm -rf /tmp/stp-mods

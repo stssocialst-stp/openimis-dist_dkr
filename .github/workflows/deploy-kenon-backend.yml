@@ -57,13 +57,13 @@ jobs:
     steps:
 
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           clean: false
 
       - name: Create .env file from workflow env
         run: |
-          cat <<EOF > $GITHUB_WORKSPACE/.env
+          cat <<EOF > "$GITHUB_WORKSPACE/.env"
             PROJECT_NAME=${PROJECT_NAME}
             DOMAIN=${DOMAIN}
             HTTP_PORT=${HTTP_PORT}
@@ -106,7 +106,7 @@ jobs:
             BISTP_SSL_VERIFY=${BISTP_SSL_VERIFY}
             BISTP_TIMEOUT=${BISTP_TIMEOUT}
             BISTP_CALLBACK_TOKEN=${BISTP_CALLBACK_TOKEN}
-            EOF
+          EOF
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -114,22 +114,51 @@ jobs:
           username: ${{ secrets.GHCR_USER }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Deploy backend
+      - name: Pull, build and deploy backend
         run: |
-          cd $GITHUB_WORKSPACE
-          docker compose --env-file .env -f docker-compose.base.yml pull backend
-          docker compose --env-file .env -f docker-compose.base.yml up -d rabbitmq --force-recreate backend worker
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
+          PROJECT_NAME="${PROJECT_NAME:-openimis}"
 
-      - name: Install STP fork modules (fresh code)
-        run: |
-          cd $GITHUB_WORKSPACE
-          for c in ${PROJECT_NAME}-api ${PROJECT_NAME}-worker; do
-            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-payroll_py@stp-changes"
-            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-individual_py@stp-changes"
-            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-grievance_social_protection_py@develop"
-            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-contribution_plan_py@release/24.04"
-            docker restart "$c"
-          done
+          if [ -z "${BE_TAG:-}" ]; then
+            echo "ERROR: BE_TAG is empty" >&2
+            exit 1
+          fi
+
+          BASE_IMAGE="ghcr.io/stssocialst-stp/kenon-backend:${BE_TAG}"
+
+          # Get the base image first, then layer the latest STP module code on
+          # top of it. Building an image (instead of running pip inside the
+          # live containers) avoids the OOM kill (exit 137) and guarantees that
+          # api and worker run exactly the same image.
+          docker pull "${BASE_IMAGE}"
+
+          docker build \
+            --no-cache \
+            --build-arg BASE_IMAGE="${BASE_IMAGE}" \
+            --tag "${BASE_IMAGE}" \
+            --file Dockerfile.backend \
+            .
+
+          docker compose --env-file .env -f docker-compose.base.yml up -d rabbitmq
+          docker compose --env-file .env -f docker-compose.base.yml up -d --force-recreate backend worker
+
+          BUILT_IMAGE_ID="$(docker image inspect --format '{{.Id}}' "${BASE_IMAGE}")"
+          API_IMAGE="$(docker inspect --format '{{.Image}}' "${PROJECT_NAME}-api")"
+          WORKER_IMAGE="$(docker inspect --format '{{.Image}}' "${PROJECT_NAME}-worker")"
+          if [ "${API_IMAGE}" != "${BUILT_IMAGE_ID}" ] || [ "${WORKER_IMAGE}" != "${BUILT_IMAGE_ID}" ]; then
+            echo "ERROR: api/worker are not running the freshly built image" >&2
+            echo "built:  ${BUILT_IMAGE_ID}" >&2
+            echo "api:    ${API_IMAGE}" >&2
+            echo "worker: ${WORKER_IMAGE}" >&2
+            exit 1
+          fi
+          echo "api and worker are running the freshly built image ${BUILT_IMAGE_ID}"
+          echo "Deployed STP module commits:"
+          docker exec "${PROJECT_NAME}-api" cat /openimis-be/stp-modules.txt || true
+
+          # Best-effort cleanup of dangling images from previous derived builds.
+          docker image prune -f --filter "until=24h" >/dev/null || true
 
   deploy-backend-dev-client:
     runs-on: coremis-dev
@@ -184,13 +213,13 @@ jobs:
     steps:
    
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           clean: false
 
       - name: Create .env file from workflow env
         run: |
-          cat <<EOF > $GITHUB_WORKSPACE/.env
+          cat <<EOF > "$GITHUB_WORKSPACE/.env"
             PROJECT_NAME=${PROJECT_NAME}
             DOMAIN=${DOMAIN}
             HTTP_PORT=${HTTP_PORT}
@@ -233,23 +262,7 @@ jobs:
             BISTP_SSL_VERIFY=${BISTP_SSL_VERIFY}
             BISTP_TIMEOUT=${BISTP_TIMEOUT}
             BISTP_CALLBACK_TOKEN=${BISTP_CALLBACK_TOKEN}
-            EOF
-
-      - name: Remove old frontend container if exists
-        run: |
-          if [ "$(docker ps -a -q -f name=${PROJECT_NAME}-api)" ]; then
-            echo "Removing old backend container..."
-            docker rm -f ${PROJECT_NAME}-api
-          else
-            echo "No old backend container found."
-          fi
-      
-          if [ "$(docker ps -a -q -f name=${PROJECT_NAME}-worker)" ]; then
-            echo "Removing old worker container..."
-            docker rm -f ${PROJECT_NAME}-worker
-          else
-            echo "No old worker container found."
-          fi
+          EOF
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -258,19 +271,48 @@ jobs:
           username: ${{ secrets.GHCR_USER }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Deploy backend
+      - name: Pull, build and deploy backend
         run: |
-          cd $GITHUB_WORKSPACE
-          docker compose --env-file .env -f docker-compose.base.yml pull backend
-          docker compose --env-file .env -f docker-compose.base.yml up -d rabbitmq --force-recreate backend worker
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
+          PROJECT_NAME="${PROJECT_NAME:-openimis}"
 
-      - name: Install STP fork modules (fresh code)
-        run: |
-          cd $GITHUB_WORKSPACE
-          for c in ${PROJECT_NAME}-api ${PROJECT_NAME}-worker; do
-            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-payroll_py@stp-changes"
-            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-individual_py@stp-changes"
-            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-grievance_social_protection_py@develop"
-            docker exec "$c" pip install --upgrade "git+https://github.com/stssocialst-stp/openimis-be-contribution_plan_py@release/24.04"
-            docker restart "$c"
-          done
+          if [ -z "${BE_TAG:-}" ]; then
+            echo "ERROR: BE_TAG is empty" >&2
+            exit 1
+          fi
+
+          BASE_IMAGE="ghcr.io/stssocialst-stp/kenon-backend:${BE_TAG}"
+
+          # Get the base image first, then layer the latest STP module code on
+          # top of it. Building an image (instead of running pip inside the
+          # live containers) avoids the OOM kill (exit 137) and guarantees that
+          # api and worker run exactly the same image.
+          docker pull "${BASE_IMAGE}"
+
+          docker build \
+            --no-cache \
+            --build-arg BASE_IMAGE="${BASE_IMAGE}" \
+            --tag "${BASE_IMAGE}" \
+            --file Dockerfile.backend \
+            .
+
+          docker compose --env-file .env -f docker-compose.base.yml up -d rabbitmq
+          docker compose --env-file .env -f docker-compose.base.yml up -d --force-recreate backend worker
+
+          BUILT_IMAGE_ID="$(docker image inspect --format '{{.Id}}' "${BASE_IMAGE}")"
+          API_IMAGE="$(docker inspect --format '{{.Image}}' "${PROJECT_NAME}-api")"
+          WORKER_IMAGE="$(docker inspect --format '{{.Image}}' "${PROJECT_NAME}-worker")"
+          if [ "${API_IMAGE}" != "${BUILT_IMAGE_ID}" ] || [ "${WORKER_IMAGE}" != "${BUILT_IMAGE_ID}" ]; then
+            echo "ERROR: api/worker are not running the freshly built image" >&2
+            echo "built:  ${BUILT_IMAGE_ID}" >&2
+            echo "api:    ${API_IMAGE}" >&2
+            echo "worker: ${WORKER_IMAGE}" >&2
+            exit 1
+          fi
+          echo "api and worker are running the freshly built image ${BUILT_IMAGE_ID}"
+          echo "Deployed STP module commits:"
+          docker exec "${PROJECT_NAME}-api" cat /openimis-be/stp-modules.txt || true
+
+          # Best-effort cleanup of dangling images from previous derived builds.
+          docker image prune -f --filter "until=24h" >/dev/null || true
