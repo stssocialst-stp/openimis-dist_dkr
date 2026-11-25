@@ -3,6 +3,10 @@
         return 301 https://$host/superset/;
     }
 
+    location ~ ^/superset/welcome/?$ {
+        return 302 https://$host/superset/superset/welcome/;
+    }
+
     location /superset/ {
         proxy_pass http://$superset;
         proxy_set_header Host $host;
