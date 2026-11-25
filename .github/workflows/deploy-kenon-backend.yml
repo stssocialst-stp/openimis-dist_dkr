@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy-backend:
-    runs-on: self-hosted
+    runs-on: coremis-dev-sintaxy
     environment: sintaxy-staging
     concurrency:
       group: deploy-sintaxy
