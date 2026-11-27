@@ -5,6 +5,7 @@ on:
 
 jobs:
   deploy-backend:
+    if: false
     runs-on: coremis-dev-sintaxy
     environment: sintaxy-staging
     concurrency:
